@@ -1,0 +1,47 @@
+name: Scheduled Listing Scrape
+
+on:
+  schedule:
+    # 09:00 Beijing time (UTC+8) daily = 01:00 UTC
+    - cron: '0 1 * * *'
+  workflow_dispatch: {}  # allows manually triggering a run from the Actions tab
+
+permissions:
+  contents: write  # needed to commit the updated database/CSV back to the repo
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run scrape -> process -> database cycle
+        run: python run_once.py
+
+      - name: Sync new listings to Notion
+        if: ${{ secrets.NOTION_TOKEN != '' }}
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+        run: python notion_sync.py
+
+      - name: Commit updated database and exports
+        run: |
+          git config user.name "listing-tracker-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add listings.db listings_export_*.csv 2>/dev/null || true
+          git diff --cached --quiet || git commit -m "Auto-update: listing scrape $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push

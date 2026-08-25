@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+*_raw_*.json
+*_processed_*.json

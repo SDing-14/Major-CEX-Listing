@@ -39,7 +39,13 @@ class BinanceProcessor:
         return date_str
     
     def determine_venue(self, listing_type):
-        """Determine venue based on listing type"""
+        """Determine venue based on listing type.
+
+        The scraper only ever emits 'spot' or 'perp' now (ambiguous /
+        non-listing titles are dropped upstream), but default to a bare
+        "Binance" venue defensively in case an older raw JSON file (with the
+        legacy 'unknown' tag) gets fed through this processor.
+        """
         if listing_type == 'spot':
             return "Binance Spot"
         elif listing_type == 'perp':
