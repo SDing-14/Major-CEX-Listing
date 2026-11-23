@@ -84,6 +84,7 @@
   "CHIP": "2026-10-16",
   "CHZ": "2026-10-16",
   "CITY": "2026-10-16",
+  "CLEAR": "2026-11-23",
   "CLOUD": "2026-10-16",
   "COINX": "2026-10-16",
   "COMP": "2026-10-16",
@@ -393,5 +394,5 @@
  },
  "note": "first-seen dates of Bybit spot base coins per CoinGecko; coins present at seeding carry the seed date and were NOT reported as listings",
  "seeded_at": "2026-10-16",
- "updated_at": "2026-11-22"
+ "updated_at": "2026-11-23"
 }
